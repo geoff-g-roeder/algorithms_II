@@ -8,7 +8,6 @@ Purpose: Implement Prim's MST algorithm on a small graph (500 nodes)
 #include <string>
 #include <fstream>
 #include <queue>
-#include <vector>
 #include <climits>
 #include <cstdlib>
 #include <set>
