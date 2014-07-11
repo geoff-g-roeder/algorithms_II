@@ -53,17 +53,6 @@ struct Graph {
     vertices[d-1].head = new_node;
   }
 
-  void print( void ) {
-    for (int v = 0; v < V; v++) {
-     Adj_List_Node* cursor = vertices[v].head;
-      std::cout << "\n Adjacency list of vertex " << v+1 << std::endl;
-      while (cursor) {
-	std::cout << "-->" << cursor->dest << "(" << cursor->weight << ")";
-	cursor = cursor->next;
-      }
-      std::cout << std::endl;
-    }
-  }
 };
 
 bool X_equals_V(int V_size, std::set<int> &X) {
