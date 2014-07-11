@@ -1,3 +1,14 @@
+/*
+Author: Geoff G. Roeder
+Date: 11 July 2014
+Description: A scheduling program that minimizes the sum of products w_j * c_j where w_j is
+the importance of job j, c_j is the sum of all job lengths up to and including job j.
+
+Secondary goal is to practice C++ OOP.
+
+*/
+
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -76,7 +87,7 @@ void print_ratio_rank_pq(ratio_comp_pq* ratio_rank) {
   int count = 0;
 
   while (!ratio_rank->empty()) {
-    cout << setprecision(40) <<  "[ " << (ratio_rank->top()).first 
+    cout << setprecision(10) <<  "[ " << (ratio_rank->top()).first 
 	 << " : " << "[ " << (ratio_rank->top()).second.first
 	 << " : " <<  (ratio_rank->top()).second.second << "]"
 	 << " ] " <<  endl;
@@ -127,10 +138,7 @@ int main ( void ) {
       string read_line;
       while (getline(jobs_file,read_line))
 	{
-	  //	  cout << read_line << endl;
 	  int space = read_line.find(' ');
-	  //	  cout << read_line.find(" ") << endl;
-	  
 	  int in_w = atoi(read_line.substr(0, read_line.find(" ")).c_str());
           int in_l = atoi(read_line.substr(space+1).c_str());
 	  
@@ -143,14 +151,13 @@ int main ( void ) {
       jobs_file.close();
     }
 
-  // Print out diff tuples
-  // print_diff_rank_pq(&diff_rank);
-  // print_ratio_rank_pq(&ratio_rank);
+  // Print_diff_rank_pq(&diff_rank);
+  // Print_ratio_rank_pq(&ratio_rank);
   
     double diff_sum = calc_weighted_sum_diff(&diff_rank);
     double ratio_sum = calc_weighted_sum_ratio(&ratio_rank);
 
-  cout << setprecision(20) <<  "Diff sum: " << diff_sum << endl
+  cout << setprecision(10) <<  "Diff sum: " << diff_sum << endl
        << "Ratio sum: " << ratio_sum << endl;
   
 
