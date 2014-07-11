@@ -1,3 +1,9 @@
+/*
+Author: Geoff G. Roeder
+Date: 11 July 2014
+Purpose: Implement Prim's MST algorithm on a small graph (500 nodes)
+*/
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -7,45 +13,9 @@
 #include <cstdlib>
 #include <set>
 
-/*
-
-Abortive attempt to write a fast implementation using PQ implemented
-over vector<HeapNode*>
-
-struct HeapNode {
-
-  int key;
-  int vertexNumber;
-
-  HeapNode(int k, int vN):key(k),vertexNumber(vN) {}
-
-  const int getKey( void ) {
-    return key;
-  }
-  void setKey ( int newKey ) {
-    key = newKey;
-  }
-  const int getVertexNumber( void ) {
-    return vertexNumber;
-  }
-  void setVertexNumber( int newVN ) {
-    vertexNumber = newVN;
-  }
-};
-
-class MinHeapNodeComparator {
-public:
-  bool operator() (const HeapNode* lhs, const HeapNode* rhs) const {
-    return lhs->key > rhs->key;
-  }
-};
-
-typedef std::priority_queue<HeapNode*, std::vector<HeapNode*>, MinHeapNodeComparator> HeapNodePQ;
-
-*/
 
 struct Adj_List_Node {
-  int key; // TODO: this is unnecessary; key is a member of Vertex
+  int key;
   int dest;
   int weight;
 
@@ -57,15 +27,8 @@ struct Adj_List_Node {
 
 struct Vertex {
   
-  bool mark; // indicates whether in MST
-  int min_weight_edge;  // For Prim's algorithm
-  int vertex_label;   // TODO: Needed?
-  int min_parent; // For Prim's algorithm
   Adj_List_Node * head;
  };
-
-// Graph uses 1-based convention for labelling nodes 1 to V
-// Graph number of nodes known beforehand (switch to vec otherwise)
 
 struct Graph {
 
@@ -77,34 +40,17 @@ struct Graph {
     vertices = new Vertex[V];
 
     for (int i =0; i < V; i++) {
-      vertices[i].vertex_label = i+1;
-      vertices[i].min_weight_edge = INT_MAX;
       vertices[i].head = NULL;
-      vertices[i].min_parent = -1;
-      vertices[i].mark = false;
   }
-  }
+ }
 
   void add_edge(int s, int d, int w) {
    Adj_List_Node* new_node = new Adj_List_Node(INT_MAX, d, w, NULL);
-    new_node->next = vertices[s-1].head; // CORRECT NODE NAME CONVENTION 1-INDEX
+    new_node->next = vertices[s-1].head; // shift 1-based to 0-based index
     vertices[s-1].head = new_node;
     new_node = new Adj_List_Node(INT_MAX, s, w, NULL);
     new_node->next = vertices[d-1].head;
     vertices[d-1].head = new_node;
-  }
-
-  bool edge_in_graph(int s, int d, int w) {
-    for (int i = 0; i < V; i++) {
-      Adj_List_Node * cursor = vertices[i].head;
-      while (cursor != NULL) {
-	if ((i+1) == s && cursor->dest == d && cursor->weight == w)
-	  return true;
-	      cursor = cursor->next;
-      }
-
-    }
-    return false;
   }
 
   void print( void ) {
@@ -120,35 +66,14 @@ struct Graph {
   }
 };
 
-/*
-bool X_equals_V(Graph * G) {
-  // Let G be a simple graph. 
-  // X_equals_V returns true iff V-X is empty iff X=V
-  
-  int V = G->V;
-  bool result = true;
-  for (int i = 0; i < V; i++) {
-    result = result && (G->vertices[i].mark);
-    if (result == false) break; // Short-circuit
-  }
-  
-  return result;
-}*/
-
-
 bool X_equals_V(int V_size, std::set<int> &X) {
-  // The proof of correctness for this function
-  // is left as an exercise for the reader or 
-  // for the author when he is less busy
+  // Correctness of this function consequence of loop invariants in Prim_MST
   return X.size() == V_size;
 
 }
 
        
 Graph * Prim_MST(Graph * G) {
-  
-  // Formally precise implementation of Prim
-  // Running time: O(|V|*|E|)
 
   // Let G=(V,E) be a simple graph
   // Let X be the labels of the vertices in the MST-so-far
@@ -217,20 +142,18 @@ Graph * Prim_MST(Graph * G) {
     }
     
      
-    // (u,v) s.t. Req(u,v) true found
+    //  found (u,v) s.t. Req(u,v) true
     // add to T since (u,v) satisfies greedy requirement
 
     T->add_edge(u,v,candidate_min_weight);
     
     sum_of_edges += (long)candidate_min_weight;
-    std::cout << "Sum: " << sum_of_edges << std::endl;
 
     // add v to X
     X.insert(v);
   }
   
   delete list_walker;    
-  //  T->print();
   std::cout << "The sum of edges in the Minimum Spanning Tree is " << sum_of_edges << std::endl;
   return T;
 }
@@ -264,8 +187,7 @@ int main ( void ) {
     std::string s_val2 = s_val2_temp.substr(0,s_val2_temp.find(" "));
     std::string s_val3_temp = in_str.substr(s_val2.size() + s_val1.size() + 2);
     std::string s_val3 = s_val3_temp.substr(0, s_val3_temp.find(" "));
-    G->add_edge(std::atoi(s_val1.c_str()),std::atoi(s_val2.c_str()),std::atoi(s_val3.c_str()));
-    
+    G->add_edge(std::atoi(s_val1.c_str()),std::atoi(s_val2.c_str()),std::atoi(s_val3.c_str()));    
  }
 
   // Prim: starting at zero,
@@ -275,10 +197,9 @@ int main ( void ) {
 
 
 //========================================================
-// APPENDIX 
+// APPENDICES: other attempted solutions
 
-    /* This is an implementation of Kruskal that failed;
-       it produces a forest of minimum edges rather than a tree. */
+    /* This is an implementation the produces a forest of minimum edges rather than a tree. */
 
     // Walk through array of Vertex
     // After execution, min_weight* variables hold minimum edge information
@@ -328,3 +249,71 @@ int main ( void ) {
     
     } */
 	  
+
+/*
+bool X_equals_V(Graph * G) {
+  // Let G be a simple graph. 
+  // X_equals_V returns true iff V-X is empty iff X=V
+  
+  int V = G->V;
+  bool result = true;
+  for (int i = 0; i < V; i++) {
+    result = result && (G->vertices[i].mark);
+    if (result == false) break; // Short-circuit
+  }
+  
+  return result;
+}*/
+
+/*
+
+  bool edge_in_graph(int s, int d, int w) {
+    for (int i = 0; i < V; i++) {
+      Adj_List_Node * cursor = vertices[i].head;
+      while (cursor != NULL) {
+	if ((i+1) == s && cursor->dest == d && cursor->weight == w)
+	  return true;
+	      cursor = cursor->next;
+      }
+
+    }
+    return false;
+  }
+*/
+
+/*
+
+Abortive attempt to write a fast implementation using PQ implemented
+over vector<HeapNode*>
+
+struct HeapNode {
+
+  int key;
+  int vertexNumber;
+
+  HeapNode(int k, int vN):key(k),vertexNumber(vN) {}
+
+  const int getKey( void ) {
+    return key;
+  }
+  void setKey ( int newKey ) {
+    key = newKey;
+  }
+  const int getVertexNumber( void ) {
+    return vertexNumber;
+  }
+  void setVertexNumber( int newVN ) {
+    vertexNumber = newVN;
+  }
+};
+
+class MinHeapNodeComparator {
+public:
+  bool operator() (const HeapNode* lhs, const HeapNode* rhs) const {
+    return lhs->key > rhs->key;
+  }
+};
+
+typedef std::priority_queue<HeapNode*, std::vector<HeapNode*>, MinHeapNodeComparator> HeapNodePQ;
+
+*/
