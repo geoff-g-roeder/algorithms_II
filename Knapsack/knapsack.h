@@ -10,6 +10,7 @@
 
 
 class PackableItem {
+
  public:
   // Returns new PackableItem
  PackableItem(int init_value, int init_weight): value_(init_value), weight_(init_weight) {}
@@ -25,6 +26,7 @@ class PackableItem {
   }
 
  private:
+
   int value_;
   int weight_;
 };
@@ -60,6 +62,7 @@ class PackableItemCollection {
   }
 
  private:
+
   std::vector<PackableItem*> *packable_items_;
 
 };
@@ -67,6 +70,7 @@ class PackableItemCollection {
 class Knapsack {
 
  public:
+
  Knapsack(int init_weight_cap):
   weight_capacity_(init_weight_cap) {
     knapsack_contents_ = new std::vector<PackableItem*>;
@@ -79,9 +83,8 @@ class Knapsack {
     solution_so_far_->push_back(first_vector);
 
     // Initialize optimum solutions for 0 items to zero max value
-    // e.g., place zeros along zeroth column
     for (int x = 0; x <= weight_capacity_; x++) {
-      solution_so_far_->at(0)->push_back(0); // For naive implementation set to 0; TODO: be more clever
+      solution_so_far_->at(0)->push_back(0);
     }
 
   }
@@ -118,7 +121,7 @@ class Knapsack {
       // Memory optimization: remember only the last 2 vector<int> of weights
       // after solution_so_far_->at(1) has been filled
       // e.g., forget the previous solution and replace with this solution.
-      //::TODO:: design recursive solution that optimizes speed. Still too slow.
+      //::TODO:: design recursive solution that optimizes speed
       solution_so_far_->at(0)->clear();
       solution_so_far_->at(0)->swap(*(solution_so_far_->at(1)));
     }
@@ -127,6 +130,7 @@ class Knapsack {
   }
 	
  private:
+
   int weight_capacity_;
   std::vector<PackableItem*> *knapsack_contents_;
   std::vector< std::vector<int>* > *solution_so_far_;
@@ -137,6 +141,7 @@ class Knapsack {
 class PackableItemsParser {
 
  public:
+
  PackableItemsParser(std::string input_name):file_name_(input_name) {}
    
   
@@ -165,7 +170,6 @@ class PackableItemsParser {
     return collection;
   }
 
-
   int get_knapsack_capacity_(){
     return knapsack_capacity_;
   }
@@ -181,7 +185,9 @@ class PackableItemsParser {
   void get_number_items_( int set_val){
     number_items_=set_val;
   }
+
  private:
+
   int number_items_;
   int knapsack_capacity_;
   std::string file_name_;
