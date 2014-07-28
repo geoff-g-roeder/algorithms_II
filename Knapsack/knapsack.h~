@@ -1,0 +1,130 @@
+#ifndef PA3_KNAPSACK_H
+#define PA3_KNAPSACK_H
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <gtest/gtest.h>
+
+
+class PackableItem {
+ public:
+  // Returns new PackableItem
+ PackableItem(int init_value, int init_weight): value_(init_value), weight_(init_weight) {}
+  
+  // Returns the weight of this item
+  const int get_weight() {
+    return weight_;
+  }
+
+  // Returns the value of this item
+  const int get_value() {
+    return value_;
+  }
+
+ private:
+  int value_;
+  int weight_;
+};
+
+class PackableItemCollection {
+
+public:
+PackableItemCollection() {
+packable_items_ = new std::vector<PackableItem*>;
+}
+
+// Creates new PackableItem and adds to this
+void add_item (int item_val_, int item_weight_) {
+PackableItem* new_item_ = 
+  new PackableItem(item_val_,item_weight_);
+packable_items_->push_back(new_item_);
+}
+
+std::vector<PackableItem*> * get_items () {
+return packable_items_;
+}
+
+private:
+std::vector<PackableItem*> *packable_items_;
+
+};
+    
+class Knapsack {
+private:
+int number_items_;
+int weight_capacity_;
+std::vector<PackableItem*> *knapsack_contents_;
+public:
+Knapsack(int init_num_items, int init_weight_cap):
+number_items_(init_num_items), weight_capacity_(init_weight_cap) {
+			     knapsack_contents_ = new std::vector<PackableItem*>;
+}
+
+  // Returns total value of the optimum packing solution
+  int pack (PackableItemCollection * things_to_pack_) {
+std::vector< std::vector<int> > *solution_so_far_ = new std::vector< std::vector<int> >;
+    
+// !!!
+return 0;
+}
+
+    };
+
+
+class PackableItemsParser {
+private:
+int number_items_;
+int knapsack_capacity_;
+std::string file_name_;
+
+public:
+ 
+
+
+
+PackableItemsParser(std::string input_name_) {
+std::ifstream read_(input_name_.c_str());
+std::string in_string_;
+           
+getline(read_,in_string_);
+std::stringstream stream(in_string_);
+
+stream >> knapsack_capacity_;
+stream >> number_items_;
+while (getline(read_,in_string_)) {
+// Do something
+}
+}
+
+int get_knapsack_capacity_(){
+return knapsack_capacity_;
+}
+
+void get_knapsack_capacity_( int set_val){
+knapsack_capacity_=set_val;
+}
+
+int get_number_items_(){
+return number_items_;
+}
+
+void get_number_items_( int set_val){
+number_items_=set_val;
+}
+	  
+};
+
+TEST(PackableItemsParserTests,capacity_and_items) {
+PackableItemsParser * test_parser = 
+  new PackableItemsParser("knapsack_small.txt");
+ASSERT_EQ(100, test_parser->get_number_items_());
+ASSERT_EQ(10000, test_parser->get_knapsack_capacity_());
+
+}
+
+
+
+
+#endif
